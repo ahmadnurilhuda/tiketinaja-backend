@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.greenacademy.tiketinaja.dto.request.EventRequest;
+import com.greenacademy.tiketinaja.dto.request.EventRequestUpdate;
 import com.greenacademy.tiketinaja.models.Event;
 import com.greenacademy.tiketinaja.models.Organizer;
 import com.greenacademy.tiketinaja.repositories.EventRepository;
@@ -104,7 +105,7 @@ public class EventService {
             Path targetFile = Path.of(filePath);
 
             Files.copy(venueLayout.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
-            String savedPath = "/events/venue-layout/" + newFileName;
+            String savedPath = "/uploads/events/venue-layout/" + newFileName;
             return savedPath;
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,7 +146,7 @@ public class EventService {
             Path targetFile = Path.of(filePath);
 
             Files.copy(poster.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
-            String savedPath = "/events/poster/" + newFileName;
+            String savedPath = "/uploads/events/poster/" + newFileName;
             return savedPath;
         } catch (Exception e) {
             e.printStackTrace();
@@ -175,7 +176,7 @@ public class EventService {
         return event;
     }
 
-    public Event update(EventRequest eventRequest, Integer id) {
+    public Event update(EventRequestUpdate eventRequest, Integer id) {
         Event event = eventRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Event not found"));
         if (event != null) {
             event.setTitle(eventRequest.getTitle());
@@ -210,5 +211,9 @@ public class EventService {
 
     public Event getEvent(Integer id) {
         return eventRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Event not found"));
+    }
+
+    public Iterable <Event> getEventByOrganizer(Integer organizerId) {
+        return eventRepo.findByOrganizerId(organizerId);
     }
 }

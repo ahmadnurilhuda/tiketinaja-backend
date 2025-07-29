@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.greenacademy.tiketinaja.common.ApiResponse;
 import com.greenacademy.tiketinaja.dto.request.EventRequest;
+import com.greenacademy.tiketinaja.dto.request.EventRequestUpdate;
 import com.greenacademy.tiketinaja.exception.ForbiddenException;
 import com.greenacademy.tiketinaja.models.Event;
 import com.greenacademy.tiketinaja.models.Organizer;
@@ -47,6 +48,16 @@ public class EventController {
                 eventService.getAllByOrganizer(pageable, title, sort, cityId, eventCategoryId, organizer.getId(),
                         provinceId)));
     }
+
+    @GetMapping("/organizer/events/{id}")
+    public ResponseEntity<ApiResponse<Event>> getEvent(@PathVariable Integer id, HttpServletRequest request) {
+        User userLogin = (User) request.getAttribute("user");
+        Organizer organizer = organizerService.getProfile(userLogin.getId());
+        if (organizer.getId() != eventService.getEvent(id).getOrganizer().getId()) {
+            throw new ForbiddenException("You are not allowed to get this event");
+        }
+        return ResponseEntity.ok(new ApiResponse<Event>(true, "Success Get Event", eventService.getEvent(id)));
+    }
     
     @PostMapping("/organizer/events/create")
     public ResponseEntity<ApiResponse<Event>> createEvent(@Valid @ModelAttribute EventRequest eventRequest,
@@ -71,7 +82,7 @@ public class EventController {
 
     @PutMapping("/organizer/events/update/{id}")
     public ResponseEntity<ApiResponse<Event>> updateEvent(@PathVariable Integer id,
-            @Valid @ModelAttribute EventRequest eventRequest,
+            @Valid @ModelAttribute EventRequestUpdate eventRequest,
             HttpServletRequest request) {
         User userLogin = (User) request.getAttribute("user");
         Organizer organizer = organizerService.getProfile(userLogin.getId());

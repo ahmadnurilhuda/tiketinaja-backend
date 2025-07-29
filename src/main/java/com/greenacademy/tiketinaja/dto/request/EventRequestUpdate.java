@@ -12,8 +12,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class EventRequest {
-
+public class EventRequestUpdate {
+    
     @NotBlank(message = "Title is required")
     @Size(min = 3, message = "Title must be at least 3 characters")
     @Size(max = 100, message = "Title must be less than 100 characters")
@@ -59,15 +59,14 @@ public class EventRequest {
 
     private boolean isOnline;
 
-    @NotNull(message = "Poster is required")
     private MultipartFile poster;
 
     private MultipartFile venueLayout;
 
-    public EventRequest() {
+    public EventRequestUpdate() {
     }
 
-    public EventRequest(String title, Integer eventCategoryId, String description, String requirements, Instant startDate,
+    public EventRequestUpdate(String title, Integer eventCategoryId, String description, String requirements, Instant startDate,
             Instant endDate, String venueName, String venueAddress, Integer cityId, boolean isOnline, MultipartFile poster,
             MultipartFile venueLayout) {
         this.title = title;
