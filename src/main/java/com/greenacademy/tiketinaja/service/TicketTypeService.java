@@ -1,7 +1,5 @@
 package com.greenacademy.tiketinaja.service;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import com.greenacademy.tiketinaja.repositories.TicketTypeRepository;
 import com.greenacademy.tiketinaja.dto.request.TicketTypeRequest;
@@ -72,5 +70,4 @@ public class TicketTypeService {
         Event event = eventService.getEvent(eventId);
         return ticketTypeRepo.findAllByEventId(event.getId());
     } 
-    
 }
