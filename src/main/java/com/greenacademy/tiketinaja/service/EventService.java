@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.greenacademy.tiketinaja.dto.request.EventRequest;
 import com.greenacademy.tiketinaja.dto.request.EventRequestUpdate;
+import com.greenacademy.tiketinaja.dto.response.EventPublicResponse;
 import com.greenacademy.tiketinaja.models.Event;
 import com.greenacademy.tiketinaja.models.Organizer;
 import com.greenacademy.tiketinaja.repositories.EventRepository;
@@ -215,5 +216,22 @@ public class EventService {
 
     public Iterable <Event> getEventByOrganizer(Integer organizerId) {
         return eventRepo.findByOrganizerId(organizerId);
+    }
+
+    public EventPublicResponse getEventBySlug(String slug) {
+        return eventRepo.findBySlug(slug).orElseThrow(() -> new IllegalArgumentException("Event not found"));
+    }
+
+    public Page<EventPublicResponse> getEvents(Integer provinceId, String title, Integer eventCategoryId, Integer cityId, String sort, Pageable pageable) {
+        String sortBy = "createdAt";
+        Sort.Direction direction = Sort.Direction.DESC;
+
+        if (sort != null && sort.contains(",")) {
+            String[] parts = sort.split(",");
+            sortBy = parts[0];
+            direction = parts[1].equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        }
+        pageable = PageRequest.of(pageable.getPageNumber(), 5, Sort.by(direction, sortBy));
+        return eventRepo.findAllPublicEvents(provinceId, title, eventCategoryId, cityId, pageable);
     }
 }
