@@ -42,7 +42,7 @@ public class Payment {
     private String transactionIdGateway;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, name = "status", columnDefinition = "enum('pending', 'success', 'failed') default 'pending'")
+    @Column(nullable = false, name = "status")
     private PaymentStatus status;
 
     @Column(name = "paid_at")
@@ -109,7 +109,7 @@ public class Payment {
     public void setTransactionIdGateway(String transactionIdGateway) {
         this.transactionIdGateway = transactionIdGateway;
     }
-
+    @Enumerated(EnumType.STRING)
     public PaymentStatus getStatus() {
         return status;
     }

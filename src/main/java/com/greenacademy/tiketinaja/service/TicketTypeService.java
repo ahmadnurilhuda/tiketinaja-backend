@@ -70,4 +70,8 @@ public class TicketTypeService {
         Event event = eventService.getEvent(eventId);
         return ticketTypeRepo.findAllByEventId(event.getId());
     } 
+
+    public TicketType getTicketType(Integer id) {
+        return ticketTypeRepo.findById(id).orElseThrow(()-> new IllegalArgumentException("TicketType not found"));
+    }
 }
