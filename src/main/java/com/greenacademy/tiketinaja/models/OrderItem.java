@@ -29,7 +29,7 @@ public class OrderItem {
 
     @ManyToOne
     @JoinColumn(name = "ticket_type_id", nullable = false)
-    private TicketType ticketTypeId;
+    private TicketType ticketType;
 
     @Column(nullable = false)
     private Integer quantity;
@@ -47,10 +47,10 @@ public class OrderItem {
 
     public OrderItem() {
     }
-    public OrderItem(Integer id, Order order, TicketType ticketTypeId, Integer quantity, BigDecimal totalPerItem) {
+    public OrderItem(Integer id, Order order, TicketType ticketType, Integer quantity, BigDecimal totalPerItem) {
         this.id = id;
         this.order = order;
-        this.ticketTypeId = ticketTypeId;
+        this.ticketType = ticketType;
         this.quantity = quantity;
         this.totalPerItem = totalPerItem;
     }
@@ -69,11 +69,11 @@ public class OrderItem {
         this.order = order;
     }
 
-    public TicketType getTicketTypeId() {
-        return ticketTypeId;
+    public TicketType getTicketType() {
+        return ticketType;
     }
-    public void setTicketTypeId(TicketType ticketTypeId) {
-        this.ticketTypeId = ticketTypeId;
+    public void setTicketTypeId(TicketType ticketType) {
+        this.ticketType = ticketType;
     }
 
     public Integer getQuantity() {

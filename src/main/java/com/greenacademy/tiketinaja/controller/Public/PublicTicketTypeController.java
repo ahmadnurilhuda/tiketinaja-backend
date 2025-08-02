@@ -9,7 +9,6 @@ import com.greenacademy.tiketinaja.common.ApiResponse;
 import com.greenacademy.tiketinaja.models.TicketType;
 import com.greenacademy.tiketinaja.service.TicketTypeService;
 
-import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 public class PublicTicketTypeController {

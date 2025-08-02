@@ -34,3 +34,5 @@ build/
 /src/resources/application-dev.properties
 
 /src/resources/static/uploads/
+
+.env
