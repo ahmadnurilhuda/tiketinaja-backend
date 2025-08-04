@@ -9,9 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.greenacademy.tiketinaja.common.ApiResponse;
 import com.greenacademy.tiketinaja.service.PaymentService;
 
@@ -19,11 +16,10 @@ import com.greenacademy.tiketinaja.service.PaymentService;
 public class MidtransController {
 
     private final PaymentService paymentService;
-    private ObjectMapper objectMapper;
     private final String MIDTRANS_SERVER_KEY;
 
     public MidtransController(PaymentService paymentService,
-            @Value("${midtrans.server.key}") String MIDTRANS_SERVER_KEY, ObjectMapper objectMapper) {
+            @Value("${midtrans.server.key}") String MIDTRANS_SERVER_KEY) {
         this.paymentService = paymentService;
         this.MIDTRANS_SERVER_KEY = MIDTRANS_SERVER_KEY;
     }

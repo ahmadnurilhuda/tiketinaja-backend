@@ -66,7 +66,7 @@ public class EventService {
             String venueLayoutUrl = saveVenueLayout(request.getVenueLayout());
             event.setVenueLayoutUrl(venueLayoutUrl);
         }
-        event.setIsOnline(request.isOnline());
+        event.setIsOnline(request.getOnline());
         event.setCity(cityService.get(request.getCityId()));
         event.setEventCategory(eventCategoryService.get(request.getEventCategoryId()));
         event.setOrganizer(organizer);
@@ -186,7 +186,7 @@ public class EventService {
             event.setDescription(eventRequest.getDescription());
             event.setStartDate(eventRequest.getStartDate());
             event.setEndDate(eventRequest.getEndDate());
-            event.setIsOnline(eventRequest.isOnline());
+            event.setIsOnline(eventRequest.getOnline());
             event.setCity(cityService.get(eventRequest.getCityId()));
             event.setEventCategory(eventCategoryService.get(eventRequest.getEventCategoryId()));
             event.setRequirements(eventRequest.getRequirements());
