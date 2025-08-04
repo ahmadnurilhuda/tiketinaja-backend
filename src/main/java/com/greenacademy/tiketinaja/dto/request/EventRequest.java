@@ -57,7 +57,7 @@ public class EventRequest {
     @NotNull(message = "City is required")
     private Integer cityId;
 
-    private boolean isOnline;
+    private boolean online;
 
     @NotNull(message = "Poster is required")
     private MultipartFile poster;
@@ -68,7 +68,7 @@ public class EventRequest {
     }
 
     public EventRequest(String title, Integer eventCategoryId, String description, String requirements, Instant startDate,
-            Instant endDate, String venueName, String venueAddress, Integer cityId, boolean isOnline, MultipartFile poster,
+            Instant endDate, String venueName, String venueAddress, Integer cityId, boolean online, MultipartFile poster,
             MultipartFile venueLayout) {
         this.title = title;
         this.eventCategoryId = eventCategoryId;
@@ -79,7 +79,7 @@ public class EventRequest {
         this.venueName = venueName;
         this.venueAddress = venueAddress;
         this.cityId = cityId;
-        this.isOnline = isOnline;
+        this.online = online;
         this.poster = poster;
         this.venueLayout = venueLayout;
     }
@@ -157,12 +157,12 @@ public class EventRequest {
         this.cityId = cityId;
     }
 
-    public boolean isOnline() {
-        return isOnline;
+    public boolean getOnline() {
+        return online;
     }
 
-    public void setOnline(boolean isOnline) {
-        this.isOnline = isOnline;
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 
     public MultipartFile getPoster() {
