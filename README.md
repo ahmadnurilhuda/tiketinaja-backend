@@ -31,22 +31,17 @@ Backend **Tiketinaja** berfungsi sebagai server API yang menangani semua logika 
 
 -   **Manajemen Pengguna & Otentikasi**:
     -   Registrasi pengguna dengan verifikasi email.
-    -   Login berbasis JWT (JSON Web Token) dengan refresh token.
-    -   Pengelolaan profil pengguna.
+    -   Login berbasis JWT (JSON Web Token).
 -   **Sistem Berbasis Peran (Role-Based)**:
     -   Otorisasi yang jelas untuk peran **Admin**, **Organizer**, dan **Buyer**.
-    -   Endpoint yang dilindungi berdasarkan peran pengguna.
 -   **Manajemen Event & Tiket**:
     -   Operasi CRUD (Create, Read, Update, Delete) penuh untuk event dan jenis tiket.
-    -   Endpoint publik untuk menampilkan daftar event kepada semua pengguna.
--   **Manajemen Pesanan**:
-    -   Logika untuk membuat pesanan dan menampilkan riwayat transaksi.
+-   **Manajemen Pesanan & Transaksi**:
+    -   Integrasi dengan payment gateway Midtrans.
 -   **Penanganan File Upload**:
     -   Menyimpan dan menyajikan gambar untuk poster event dan layout venue.
--   **Validasi Data**:
-    -   Validasi input yang kuat di level DTO (Data Transfer Object) untuk memastikan integritas data.
--   **Paginasi & Penyortiran**:
-    -   Dukungan paginasi dan penyortiran untuk endpoint yang mengembalikan daftar data.
+-   **Validasi Data & Paginasi**:
+    -   Validasi input yang kuat dan dukungan paginasi untuk daftar data.
 
 ---
 
@@ -55,22 +50,19 @@ Backend **Tiketinaja** berfungsi sebagai server API yang menangani semua logika 
 -   **Framework**: [Spring Boot](https://spring.io/projects/spring-boot)
 -   **Bahasa**: [Java](https://www.java.com/) (versi 17 atau lebih tinggi)
 -   **Akses Data**: [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
--   **Database**: [MySQL](https://www.mysql.com/) (atau database relasional lainnya)
+-   **Database**: [MySQL](https://www.mysql.com/)
 -   **Keamanan**: [Spring Security](https://spring.io/projects/spring-security), [JSON Web Tokens (JWT)](https://jwt.io/)
--   **Validasi**: Jakarta Bean Validation
 -   **Build Tool**: [Maven](https://maven.apache.org/) atau [Gradle](https://gradle.org/)
 
 ---
 
 ## 🌐 Struktur API Endpoints
 
-API ini memiliki beberapa grup endpoint utama yang dilindungi berdasarkan peran:
-
--   `/auth/**`: Endpoint untuk otentikasi (login, register, verifikasi).
--   `/public/**`: Endpoint yang dapat diakses publik (melihat event, kategori, kota).
--   `/buyer/**`: Endpoint khusus untuk pengguna yang sudah login (membuat pesanan, melihat tiket).
--   `/organizer/**`: Endpoint untuk organizer (mengelola event, tiket, melihat dashboard).
--   `/admin/**`: Endpoint untuk admin (mengelola data master, pengguna).
+-   `/auth/**`: Endpoint untuk otentikasi.
+-   `/public/**`: Endpoint yang dapat diakses publik.
+-   `/buyer/**`: Endpoint khusus untuk pengguna yang sudah login.
+-   `/organizer/**`: Endpoint untuk organizer.
+-   `/admin/**`: Endpoint untuk admin.
 -   `/uploads/**`: Path untuk menyajikan file statis seperti gambar.
 
 ---
@@ -82,6 +74,8 @@ API ini memiliki beberapa grup endpoint utama yang dilindungi berdasarkan peran:
 -   JDK (Java Development Kit) versi 17 atau lebih tinggi.
 -   Maven atau Gradle.
 -   Database MySQL yang sedang berjalan.
+-   Akun Mailtrap (untuk testing email di environment development).
+-   Akun Midtrans (untuk payment gateway).
 
 ### Instalasi & Menjalankan
 
@@ -91,35 +85,63 @@ API ini memiliki beberapa grup endpoint utama yang dilindungi berdasarkan peran:
     cd tiketinaja-backend
     ```
 
-2.  **Konfigurasi Database:**
-    Buka `src/main/resources/application.properties` (atau `.yml`) dan sesuaikan konfigurasi database Anda.
+2.  **Konfigurasi Lingkungan:**
+    Buat file `.env` di direktori utama (root) proyek. Lihat bagian [Konfigurasi Lingkungan](#konfigurasi-lingkungan) di bawah untuk detailnya.
 
 3.  **Build dan jalankan aplikasi:**
     -   **Dengan Maven:**
         ```bash
         ./mvnw spring-boot:run
         ```
+    -   **Dengan Gradle:**
+        ```bash
+        ./gradlew bootRun
+        ```
 
-4.  Aplikasi akan berjalan di port `9988` (atau port yang Anda konfigurasikan).
+4.  Aplikasi akan berjalan di port `9988`.
 
 ### Konfigurasi Lingkungan
 
-Pengaturan penting berada di `src/main/resources/application.properties`. Pastikan Anda mengatur:
+Proyek ini menggunakan sistem profil Spring (`dev` untuk development). Konfigurasi utama ada di `application.properties`, dan konfigurasi spesifik untuk development ada di `application-dev.properties`.
 
--   **Koneksi Database**:
+Data sensitif dimuat dari file `.env` di root proyek.
+
+1.  **Buat file `.env`** di direktori utama proyek.
+
+2.  **Isi file `.env`** dengan variabel berikut (ganti dengan nilai Anda sendiri):
+    ```env
+    # Kredensial Mailtrap
+    MAIL_USERNAME=username_mailtrap_anda
+    MAIL_PASSWORD=password_mailtrap_anda
+
+    # Kunci rahasia untuk JWT (buat yang sangat acak dan panjang)
+    JWT_SECRET=kunci-rahasia-jwt-anda-yang-sangat-panjang
+
+    # Kunci Midtrans
+    MIDTRANS_CLIENT_KEY=kunci_client_midtrans_anda
+    MIDTRANS_SERVER_KEY=kunci_server_midtrans_anda
+    ```
+
+3.  **Pastikan `application-dev.properties` sudah benar:**
+    Pastikan file `src/main/resources/application-dev.properties` Anda berisi konfigurasi database dan memuat variabel dari `.env`.
     ```properties
-    spring.datasource.url=jdbc:mysql://localhost:3306/tiketinaja_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    # Konfigurasi Database Development
+    spring.datasource.url=jdbc:mysql://localhost:3308/tiketinaja?useSSL=false&createDatabaseIfNotExist=true
     spring.datasource.username=root
-    spring.datasource.password=password_anda
-    ```
--   **Konfigurasi JWT**:
-    ```properties
-    jwt.secret=kunci-rahasia-jwt-anda-yang-sangat-panjang
-    jwt.expiration.ms=86400000 # 24 jam
-    ```
--   **Path Penyimpanan File**:
-    ```properties
-    file.upload-dir=./uploads
+    spring.datasource.password=
+
+    # Konfigurasi Mailtrap untuk Development
+    spring.mail.host=smtp.mailtrap.io
+    spring.mail.port=2525
+    spring.mail.username=${MAIL_USERNAME}
+    spring.mail.password=${MAIL_PASSWORD}
+
+    # Konfigurasi JWT Secret untuk Development
+    jwt.secret=${JWT_SECRET}
+
+    # Konfigurasi Midtrans
+    midtrans.client-key=${MIDTRANS_CLIENT_KEY}
+    midtrans.server-key=${MIDTRANS_SERVER_KEY}
     ```
 
 ---
@@ -127,4 +149,4 @@ Pengaturan penting berada di `src/main/resources/application.properties`. Pastik
 ## 🔒 Keamanan
 
 -   **Otentikasi**: Setiap permintaan ke endpoint yang dilindungi harus menyertakan `Authorization` header dengan `Bearer Token` (JWT).
--   **Otorisasi**: Akses ke endpoint `/admin/**` dan `/organizer/**` dibatasi oleh peran pengguna melalui `Interceptor` di Spring. Pengguna biasa (Buyer) tidak akan bisa mengakses endpoint ini.
+-   **Otorisasi**: Akses ke endpoint `/admin/**` dan `/organizer/**` dibatasi oleh peran pengguna melalui `Interceptor` di Spring.
