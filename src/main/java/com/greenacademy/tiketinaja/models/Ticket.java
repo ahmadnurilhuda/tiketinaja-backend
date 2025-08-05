@@ -73,11 +73,11 @@ public class Ticket {
         this.uniqueCode = uniqueCode;
     }
 
-    public boolean isUsed() {
+    public boolean getIsUsed() {
         return isUsed;
     }
 
-    public void setUsed(boolean isUsed) {
+    public void setIsUsed(boolean isUsed) {
         this.isUsed = isUsed;
     }
 

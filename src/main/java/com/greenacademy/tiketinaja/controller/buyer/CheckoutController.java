@@ -21,7 +21,7 @@ public class CheckoutController {
     public CheckoutController(CheckoutService checkoutService) {
         this.checkoutService = checkoutService;
     }
-    @PostMapping("/checkout/event/ticket-type")
+    @PostMapping("/buyer/checkout/event/ticket-type")
     public ResponseEntity<ApiResponse<CheckoutResponse>> checkout(@RequestBody CheckoutRequest checkoutRequest, HttpServletRequest request) {
         User userLogin = (User) request.getAttribute("user");
         return ResponseEntity.ok(new ApiResponse<CheckoutResponse>(true, "Success Checkout", checkoutService.checkout(userLogin, checkoutRequest)));

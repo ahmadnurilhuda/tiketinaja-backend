@@ -1,6 +1,5 @@
 package com.greenacademy.tiketinaja.controller.buyer;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +23,7 @@ public class MidtransController {
         this.MIDTRANS_SERVER_KEY = MIDTRANS_SERVER_KEY;
     }
 
-    @PostMapping("/midtrans/callback")
+    @PostMapping("/buyer/midtrans/callback")
     public ResponseEntity<ApiResponse<String>> midtransCallback(@RequestBody Map<String, Object> payload) {
 
         Map<String, Object> payloadChecked = paymentService.checkSignature(MIDTRANS_SERVER_KEY, payload);

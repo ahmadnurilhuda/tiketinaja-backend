@@ -21,6 +21,7 @@ import com.greenacademy.tiketinaja.dto.request.TicketTypeOrderItemRequest;
 import com.greenacademy.tiketinaja.dto.response.CheckoutResponse;
 import com.greenacademy.tiketinaja.enums.Enum.OrderStatus;
 import com.greenacademy.tiketinaja.enums.Enum.PaymentStatus;
+import com.greenacademy.tiketinaja.models.Event;
 import com.greenacademy.tiketinaja.models.Order;
 import com.greenacademy.tiketinaja.models.OrderItem;
 import com.greenacademy.tiketinaja.models.Payment;
@@ -61,7 +62,9 @@ public class CheckoutService {
 
         for (TicketTypeOrderItemRequest item : checkoutRequest.getItems()) {
             TicketType ticket = ticketTypeService.getTicketType(item.getTicketTypeId());
-
+            System.out.println("\n\n\nevent start");
+            Event event = ticket.getEvent();
+            System.out.println("\n\n\n\nevent: " + event.getId()+ "\n\n\n\n");
             Instant now = Instant.now();
             if (ticket.getStartDate().isAfter(now)) {
                 throw new IllegalArgumentException("Ticket type not available");
@@ -82,10 +85,16 @@ public class CheckoutService {
             orderItems.add(orderItem);
 
             Map<String, Object> snapItem = new HashMap<>();
+            snapItem.put("eventId", event.getId());
+            snapItem.put("eventSlug", event.getSlug());
+            snapItem.put("eventTitle", event.getTitle());
+            snapItem.put("eventStartDate", event.getStartDate());
+            snapItem.put("eventEndDate", event.getEndDate());
+            snapItem.put("eventPosterUrl", event.getPosterUrl());
             snapItem.put("ticketTypeId", ticket.getId());
-            snapItem.put("name", ticket.getName());
-            snapItem.put("price", ticket.getPrice());
-            snapItem.put("quantity", item.getQuantity());
+            snapItem.put("ticketTypeName", ticket.getName());
+            snapItem.put("ticketTypePrice", ticket.getPrice());
+            snapItem.put("ticketTypeQuantity", item.getQuantity());
             snapshot.add(snapItem);
         }
 
