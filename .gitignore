@@ -31,7 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-/src/main/resources/application-dev.properties
 
 # Ignore uploads folder
 /src/main/resources/static/uploads/
