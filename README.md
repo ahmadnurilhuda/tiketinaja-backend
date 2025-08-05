@@ -3,7 +3,7 @@
 ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
 ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
 ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
-![Postgres](https://img.shields.io/badge/postgresql-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white)
+![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
 
 Ini adalah repositori backend untuk **Tiketinaja**, sebuah REST API yang dibangun dengan Spring Boot untuk melayani aplikasi frontend Next.js.
 
@@ -55,10 +55,10 @@ Backend **Tiketinaja** berfungsi sebagai server API yang menangani semua logika 
 -   **Framework**: [Spring Boot](https://spring.io/projects/spring-boot)
 -   **Bahasa**: [Java](https://www.java.com/) (versi 17 atau lebih tinggi)
 -   **Akses Data**: [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
--   **Database**: [MySQL](https://www.mysql.com/)
+-   **Database**: [MySQL](https://www.mysql.com/) (atau database relasional lainnya)
 -   **Keamanan**: [Spring Security](https://spring.io/projects/spring-security), [JSON Web Tokens (JWT)](https://jwt.io/)
 -   **Validasi**: Jakarta Bean Validation
--   **Build Tool**: [Maven](https://maven.apache.org/)
+-   **Build Tool**: [Maven](https://maven.apache.org/) atau [Gradle](https://gradle.org/)
 
 ---
 
@@ -80,7 +80,7 @@ API ini memiliki beberapa grup endpoint utama yang dilindungi berdasarkan peran:
 ### Prasyarat
 
 -   JDK (Java Development Kit) versi 17 atau lebih tinggi.
--   Maven
+-   Maven atau Gradle.
 -   Database MySQL yang sedang berjalan.
 
 ### Instalasi & Menjalankan
@@ -108,8 +108,8 @@ Pengaturan penting berada di `src/main/resources/application.properties`. Pastik
 
 -   **Koneksi Database**:
     ```properties
-    spring.datasource.url=jdbc:postgresql://localhost:5432/tiketinaja_db
-    spring.datasource.username=postgres
+    spring.datasource.url=jdbc:mysql://localhost:3306/tiketinaja_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    spring.datasource.username=root
     spring.datasource.password=password_anda
     ```
 -   **Konfigurasi JWT**:
