@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore uploads folder
+/src/main/resources/static/uploads/
+
+.env
