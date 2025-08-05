@@ -16,7 +16,6 @@ public interface EventRepository extends CrudRepository<Event, Integer> {
         boolean existsBySlug(String slug);
 
         Iterable<Event> findByOrganizerId(Integer organizerId);
-
         @Query("""
                         SELECT e FROM Event e
                         LEFT JOIN e.city c
