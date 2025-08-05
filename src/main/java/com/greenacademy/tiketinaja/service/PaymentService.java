@@ -17,10 +17,12 @@ import com.greenacademy.tiketinaja.models.Order;
 import com.greenacademy.tiketinaja.models.OrderItem;
 import com.greenacademy.tiketinaja.models.Payment;
 import com.greenacademy.tiketinaja.models.Ticket;
+import com.greenacademy.tiketinaja.models.TicketType;
 import com.greenacademy.tiketinaja.models.TransactionType;
 import com.greenacademy.tiketinaja.repositories.OrderRepository;
 import com.greenacademy.tiketinaja.repositories.PaymentRepository;
 import com.greenacademy.tiketinaja.repositories.TicketRepository;
+import com.greenacademy.tiketinaja.repositories.TicketTypeRepository;
 
 import jakarta.transaction.Transactional;
 
@@ -29,6 +31,8 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepo;
     private final OrderService orderService;
+    private final TicketTypeService ticketTypeService;
+    private final TicketTypeRepository ticketTypeRepo;
     private final OrderRepository orderRepo;
     private final OrderItemService orderItemService;
     private final TransactionTypeService transactionTypeService;
@@ -36,13 +40,15 @@ public class PaymentService {
 
     public PaymentService(PaymentRepository paymentRepo, OrderService orderService,
             TransactionTypeService transactionTypeService, OrderRepository orderRepo, OrderItemService orderItemService,
-            TicketRepository ticketRepo) {
+            TicketRepository ticketRepo, TicketTypeService ticketTypeService, TicketTypeRepository ticketTypeRepo) {
         this.paymentRepo = paymentRepo;
         this.orderService = orderService;
         this.orderRepo = orderRepo;
         this.transactionTypeService = transactionTypeService;
         this.orderItemService = orderItemService;
         this.ticketRepo = ticketRepo;
+        this.ticketTypeService = ticketTypeService;
+        this.ticketTypeRepo = ticketTypeRepo;
     }
 
     public Payment getPayment(Integer orderId) {
@@ -98,29 +104,45 @@ public class PaymentService {
 
         Payment payment = getPayment(orderId);
 
-        if ("settlement".equals(transactionStatus) || "capture".equals(transactionStatus)) {
+        if (!"settlement".equals(transactionStatus) && !"capture".equals(transactionStatus)) {
             payment.setTransactionIdGateway(transactionId);
-            payment.setStatus(PaymentStatus.SUCCESS);
+            payment.setStatus(PaymentStatus.FAILED);
             TransactionType transactionTypeExist = transactionTypeService.getByName(transactionType);
             payment.setTransactionType(transactionTypeExist);
-            payment.setPaidAt(Instant.now());
             paymentRepo.save(payment);
+            
             Order order = orderService.getOrder(orderId);
-            order.setStatus(OrderStatus.PAID);
+            order.setStatus(OrderStatus.FAILED);
             orderRepo.save(order);
+            throw new IllegalArgumentException("Payment failed with status: " + transactionStatus);
+        }
+        payment.setTransactionIdGateway(transactionId);
+        payment.setStatus(PaymentStatus.SUCCESS);
+        TransactionType transactionTypeExist = transactionTypeService.getByName(transactionType);
+        payment.setTransactionType(transactionTypeExist);
+        payment.setPaidAt(Instant.now());
+        paymentRepo.save(payment);
 
-            List<OrderItem> items = orderItemService.getAllByOrderId(orderId);
-            for (OrderItem item : items) {
-                for (int i = 0; i < item.getQuantity(); i++) {
-                    Ticket ticket = new Ticket();
-                    ticket.setOrderItem(item);
-                    ticket.setUniqueCode(UUID.randomUUID().toString());
-                    ticket.setUsed(false);
-                    ticketRepo.save(ticket);
-                }
+        Order order = orderService.getOrder(orderId);
+        order.setStatus(OrderStatus.PAID);
+        orderRepo.save(order);
+
+        List<OrderItem> items = orderItemService.getAllByOrderId(orderId);
+        for (OrderItem item : items) {
+            TicketType ticketType = ticketTypeService.getTicketTypeByOrderItem(item.getId());
+            if (ticketType.getQuantity() < item.getQuantity()) {
+                throw new IllegalStateException(
+                        ticketType.getName() + " from " + ticketType.getEvent().getTitle() + " quantity not enough");
             }
-        } else {
-            throw new IllegalArgumentException("Payment failed");
+            ticketType.setQuantity(ticketType.getQuantity() - item.getQuantity());
+            ticketTypeRepo.save(ticketType);
+            for (int i = 0; i < item.getQuantity(); i++) {
+                Ticket ticket = new Ticket();
+                ticket.setOrderItem(item);
+                ticket.setUniqueCode(UUID.randomUUID().toString());
+                ticket.setIsUsed(false);
+                ticketRepo.save(ticket);
+            }
         }
     }
 

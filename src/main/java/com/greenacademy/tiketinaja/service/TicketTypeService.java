@@ -74,4 +74,8 @@ public class TicketTypeService {
     public TicketType getTicketType(Integer id) {
         return ticketTypeRepo.findById(id).orElseThrow(()-> new IllegalArgumentException("TicketType not found"));
     }
+
+    public TicketType getTicketTypeByOrderItem(Integer id) {
+        return ticketTypeRepo.findByOrderItemId(id).orElseThrow(()-> new IllegalArgumentException("TicketType not found"));
+    }
 }
